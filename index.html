@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit 6 Listening Task 2</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#dbe3ee;
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --good:#15803d;
+      --good-bg:#ecfdf3;
+      --bad:#b91c1c;
+      --bad-bg:#fef2f2;
+      --shadow:0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:linear-gradient(180deg, #eef4ff 0%, var(--bg) 180px);
+      color:var(--text);
+      line-height:1.6;
+    }
+
+    .page{
+      max-width:980px;
+      margin:0 auto;
+      padding:24px 16px 48px;
+    }
+
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:28px 22px;
+      margin-bottom:22px;
+    }
+
+    .eyebrow{
+      margin:0 0 8px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--primary);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(28px, 4vw, 40px);
+      line-height:1.15;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .audio-status{
+      margin-top:14px;
+      min-height:24px;
+      font-size:14px;
+      color:var(--primary-dark);
+      font-weight:600;
+    }
+
+    .question-list{
+      display:grid;
+      gap:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px 18px;
+      transition:border-color .2s ease, transform .2s ease, background .2s ease;
+    }
+
+    .card.correct{
+      border-color:#86efac;
+      background:#f7fff9;
+    }
+
+    .card.incorrect{
+      border-color:#fecaca;
+      background:#fffafa;
+    }
+
+    .card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .q-no{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:52px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#e8f0ff;
+      color:var(--primary-dark);
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .q-type{
+      font-size:13px;
+      color:var(--muted);
+      background:#f8fafc;
+      border:1px solid var(--line);
+      padding:5px 10px;
+      border-radius:999px;
+    }
+
+    fieldset{
+      border:0;
+      padding:0;
+      margin:0;
+      min-width:0;
+    }
+
+    legend{
+      width:100%;
+      padding:0;
+      margin:0 0 14px;
+      font-weight:700;
+      font-size:18px;
+      color:#111827;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+    }
+
+    .option{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 14px;
+      background:#fff;
+      cursor:pointer;
+      transition:border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    .option:hover{
+      border-color:#bfd3ff;
+      background:#f8fbff;
+      transform:translateY(-1px);
+    }
+
+    .option input{
+      margin-top:3px;
+      transform:scale(1.15);
+      accent-color:var(--primary);
+      flex:0 0 auto;
+    }
+
+    .option-letter{
+      min-width:26px;
+      height:26px;
+      border-radius:50%;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:#eff6ff;
+      color:var(--primary-dark);
+      font-weight:700;
+      font-size:13px;
+      flex:0 0 auto;
+    }
+
+    .option-text{
+      flex:1;
+      color:#1f2937;
+    }
+
+    .gap-input{
+      width:100%;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      font-size:16px;
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease;
+      background:#fff;
+    }
+
+    .gap-input:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(37, 99, 235, .12);
+    }
+
+    .feedback{
+      margin-top:16px;
+      padding:14px;
+      border-radius:16px;
+      border:1px dashed var(--line);
+      background:#fafcff;
+    }
+
+    .feedback.hidden,
+    .transcript.hidden,
+    .results.hidden{
+      display:none;
+    }
+
+    .feedback-line{
+      margin:0 0 10px;
+      font-size:15px;
+    }
+
+    .feedback-line:last-child{
+      margin-bottom:0;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      margin-right:8px;
+      vertical-align:middle;
+    }
+
+    .badge.good{
+      background:var(--good-bg);
+      color:var(--good);
+    }
+
+    .badge.bad{
+      background:var(--bad-bg);
+      color:var(--bad);
+    }
+
+    .support-tools{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .mini-btn,
+    .primary-btn,
+    .secondary-btn{
+      border:0;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      transition:transform .15s ease, opacity .15s ease, background .2s ease;
+    }
+
+    .mini-btn:hover,
+    .primary-btn:hover,
+    .secondary-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .mini-btn{
+      background:#eaf2ff;
+      color:var(--primary-dark);
+    }
+
+    .mini-btn.transcript-toggle{
+      background:#f3f4f6;
+      color:#374151;
+    }
+
+    .primary-btn{
+      background:var(--primary);
+      color:#fff;
+      min-width:150px;
+    }
+
+    .primary-btn:hover{
+      background:var(--primary-dark);
+    }
+
+    .secondary-btn{
+      background:#e5e7eb;
+      color:#1f2937;
+      min-width:150px;
+    }
+
+    .transcript{
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid var(--line);
+    }
+
+    .transcript-label{
+      font-size:12px;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    }
+
+    .transcript p{
+      margin:0;
+      color:#374151;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:center;
+      margin:26px 0 10px;
+    }
+
+    .results{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:24px 20px;
+      margin-top:18px;
+    }
+
+    .results h2{
+      margin:0 0 10px;
+      font-size:24px;
+    }
+
+    .score{
+      font-size:30px;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 8px;
+    }
+
+    .score-sub{
+      margin:0;
+      color:var(--muted);
+      font-size:16px;
+    }
+
+    @media (max-width:640px){
+      .page{padding:16px 12px 36px}
+      .hero{padding:22px 16px}
+      .card{padding:16px 14px}
+      legend{font-size:17px}
+      .option{padding:12px}
+      .actions{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .primary-btn,.secondary-btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">Listening Practice</p>
+      <h1>Unit 6 Listening Task 2</h1>
+      <p>Read the questions, answer all items, and click Submit at the end. 交卷后只会为错题显示重播音频与原文按钮。</p>
+      <div id="audioStatus" class="audio-status" aria-live="polite"></div>
+    </header>
+
+    <main>
+      <form id="quizForm" novalidate>
+        <div id="questionList" class="question-list"></div>
+
+        <div class="actions">
+          <button type="submit" class="primary-btn">提交答案</button>
+          <button type="button" id="resetBtn" class="secondary-btn">重新作答</button>
+        </div>
+      </form>
+
+      <section id="results" class="results hidden" aria-live="polite">
+        <h2>结果</h2>
+        <p id="scoreText" class="score"></p>
+        <p id="scoreSubtext" class="score-sub"></p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // This page expects separate clips in the same folder:
+    // Q1.mp3, Q2.mp3, Q3.mp3 ... Q10.mp3
+
+    const quizData = [
+      {
+        id: 1,
+        type: "multiple-choice",
+        question: "According to Paul, the second step in the traditional logging process is _______.",
+        options: [
+          { value: "a", text: "cutting down marked trees" },
+          { value: "b", text: "planning new forest roads" },
+          { value: "c", text: "taking logs to the factory" },
+          { value: "d", text: "chopping branches off" }
+        ],
+        answer: "a",
+        audio: "Q1.mp3",
+        transcript: "There are several steps. First, workers choose which trees to cut down, often marking them. Second, they cut them down and process them into logs. These logs are then transported to mills, where they're turned into things like lumber or paper.",
+        timeRange: { start: "00:00:27", end: "00:00:46" }
+      },
+      {
+        id: 2,
+        type: "multiple-choice",
+        question: "Emma says deforestation is such a big issue because _______.",
+        options: [
+          { value: "a", text: "it changes weather patterns" },
+          { value: "b", text: "its industrial scale is massive" },
+          { value: "c", text: "it makes wood too expensive" },
+          { value: "d", text: "it could not meet people’s needs" }
+        ],
+        answer: "b",
+        audio: "Q2.mp3",
+        transcript: "Right, so it's a long industrial process. And that's exactly why deforestation is one of the biggest environmental issues we're facing. The scale is huge.",
+        timeRange: { start: "00:00:48", end: "00:00:58" }
+      },
+      {
+        id: 3,
+        type: "multiple-choice",
+        question: "Paul's first suggested solution to reduce deforestation is to _______.",
+        options: [
+          { value: "a", text: "stop using wood products" },
+          { value: "b", text: "apply sustainable logging methods" },
+          { value: "c", text: "cultivate alternative crops" },
+          { value: "d", text: "tax all wood sales" }
+        ],
+        answer: "b",
+        audio: "Q3.mp3",
+        transcript: "Well, we rely on trees for so many things. Paper, construction materials, agriculture, and even fuel in some places. But I think one of the most important steps is to adopt sustainable logging practices. If we manage forests responsibly, we can still meet our needs while protecting ecosystems.",
+        timeRange: { start: "00:01:05", end: "00:01:30" }
+      },
+      {
+        id: 4,
+        type: "multiple-choice",
+        question: "An action Paul did NOT mention that governments could take is _______.",
+        options: [
+          { value: "a", text: "placing limits on logging in specific areas" },
+          { value: "b", text: "offering tax incentives for meeting sustainability goals" },
+          { value: "c", text: "running education campaigns for the public" },
+          { value: "d", text: "requiring companies to replant trees" }
+        ],
+        answer: "c",
+        audio: "Q4.mp3",
+        transcript: "That's the real challenge. But I think there are a few ways to encourage companies to act more responsibly. For one, governments can step in with stronger regulations. They could add limits on how much logging can be done in certain areas and require companies to replant trees. At the same time, businesses could be awarded with things like tax reductions if they meet certain sustainability targets.",
+        timeRange: { start: "00:01:42", end: "00:02:14" }
+      },
+      {
+        id: 5,
+        type: "multiple-choice",
+        question: "Besides government action, Emma says that _______ also have the power to create change.",
+        options: [
+          { value: "a", text: "international charities" },
+          { value: "b", text: "machinery makers" },
+          { value: "c", text: "movie stars" },
+          { value: "d", text: "buyers" }
+        ],
+        answer: "d",
+        audio: "Q5.mp3",
+        transcript: "That's a good point. Governments definitely have a role to play, but I guess consumers have power here too. If more of us demand sustainably sourced products like certified wood or paper from companies that don't contribute to deforestation, it could put pressure on businesses to change their practices.",
+        timeRange: { start: "00:02:14", end: "00:02:31" }
+      },
+      {
+        id: 6,
+        type: "multiple-choice",
+        question: "According to Paul, the main current problem with labels like FSC is that ________.",
+        options: [
+          { value: "a", text: "they increase the final price for consumers" },
+          { value: "b", text: "most people don’t recognise them" },
+          { value: "c", text: "their standards are not strict enough" },
+          { value: "d", text: "they are too difficult for companies to obtain" }
+        ],
+        answer: "b",
+        audio: "Q6.mp3",
+        transcript: "Exactly, Emma. That's why certification bodies like the Forest Stewardship Council or the FSC are really important. They make it easier for consumers to choose products that are harvested in a way that doesn't harm the environment. But right now, not enough people know how to look for these labels.",
+        timeRange: { start: "00:02:33", end: "00:02:56" }
+      },
+      {
+        id: 7,
+        type: "multiple-choice",
+        question: "The ‘promising alternative’ to wood that Paul describes is _______.",
+        options: [
+          { value: "a", text: "plastic" },
+          { value: "b", text: "metal" },
+          { value: "c", text: "bamboo" },
+          { value: "d", text: "glass" }
+        ],
+        answer: "c",
+        audio: "Q7.mp3",
+        transcript: "The second solution is to promote alternatives to wood products. If we reduce the overall demand for wood, that could help ease the pressure on forests. What kind of alternatives are you thinking of? One promising alternative is bamboo.",
+        timeRange: { start: "00:03:01", end: "00:03:18" }
+      },
+      {
+        id: 8,
+        type: "multiple-choice",
+        question: "After discussing material alternatives and recycling, Paul introduces the major action of _______.",
+        options: [
+          { value: "a", text: "using new logging tech" },
+          { value: "b", text: "launching reforestation projects" },
+          { value: "c", text: "making stricter laws" },
+          { value: "d", text: "joining global conservation agreements" }
+        ],
+        answer: "b",
+        audio: "Q8.mp3",
+        transcript: "But I also think that reforestation efforts are key. We need to replace what's been lost by planting new trees in areas that have been cleared. Exactly. Reforestation is the 4th solution.",
+        timeRange: { start: "00:04:07", end: "00:04:20" }
+      },
+      {
+        id: 9,
+        type: "multiple-choice",
+        question: "A specific detail Paul gives about reforestation is to _______.",
+        options: [
+          { value: "a", text: "plant local, native species" },
+          { value: "b", text: "use fast-growing types" },
+          { value: "c", text: "start with small pilot projects first" },
+          { value: "d", text: "let machines do the work" }
+        ],
+        answer: "a",
+        audio: "Q9.mp3",
+        transcript: "Some countries have already launched reforestation projects, but we need more global participation to make a real impact. And it's not just about planting any trees. We need to focus on planting native species that are suited to the local environment to ensure healthy ecosystems.",
+        timeRange: { start: "00:04:34", end: "00:04:56" }
+      },
+      {
+        id: 10,
+        type: "multiple-choice",
+        question: "In their final summary, both speakers agree that _______ is ultimately needed for success.",
+        options: [
+          { value: "a", text: "one strong international law" },
+          { value: "b", text: "major advances in technology" },
+          { value: "c", text: "collective action from all groups" },
+          { value: "d", text: "changing individual lifestyles" }
+        ],
+        answer: "c",
+        audio: "Q10.mp3",
+        transcript: "So the solution is a mix. Sustainable logging, alternatives like bamboo, recycling and reforestation. All these parts are connected. It's about changing how we use resources. Right. It's a bigger issue of consumption. We need a holistic, sustainable approach, and we need to start now. I agree. We have the ideas, but it will take effort from everyone, governments, businesses, and us.",
+        timeRange: { start: "00:05:23", end: "00:05:54" }
+      }
+    ];
+
+    const form = document.getElementById("quizForm");
+    const questionList = document.getElementById("questionList");
+    const results = document.getElementById("results");
+    const scoreText = document.getElementById("scoreText");
+    const scoreSubtext = document.getElementById("scoreSubtext");
+    const resetBtn = document.getElementById("resetBtn");
+    const audioStatus = document.getElementById("audioStatus");
+
+    let currentAudio = null;
+    let currentAudioFile = "";
+
+    function normalizeAudioPath(name) {
+      return /\.(mp3|wav|ogg|m4a)$/i.test(name) ? name : `${name}.mp3`;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getTypeLabel(type) {
+      if (type === "true-false") return "判断题";
+      if (type === "gap-fill") return "填空题";
+      return "单选题";
+    }
+
+    function renderOptions(question) {
+      if (question.type === "gap-fill") {
+        return `
+          <input
+            class="gap-input"
+            type="text"
+            name="q-${question.id}"
+            autocomplete="off"
+            placeholder="Type your answer here"
+          />
+        `;
+      }
+
+      const options = question.options.map(option => `
+        <label class="option">
+          <input type="radio" name="q-${question.id}" value="${escapeHtml(option.value)}" />
+          <span class="option-letter">${escapeHtml(option.value.toUpperCase())}</span>
+          <span class="option-text">${escapeHtml(option.text)}</span>
+        </label>
+      `).join("");
+
+      return `<div class="options">${options}</div>`;
+    }
+
+    function renderQuiz() {
+      questionList.innerHTML = quizData.map(question => `
+        <article class="card" id="card-${question.id}">
+          <div class="card-head">
+            <span class="q-no">Q${question.id}</span>
+            <span class="q-type">${getTypeLabel(question.type)}</span>
+          </div>
+          <fieldset>
+            <legend>${question.id}. ${escapeHtml(question.question)}</legend>
+            ${renderOptions(question)}
+          </fieldset>
+          <div class="feedback hidden" id="feedback-${question.id}"></div>
+        </article>
+      `).join("");
+    }
+
+    function getResponse(question) {
+      if (question.type === "gap-fill") {
+        const input = form.querySelector(`[name="q-${question.id}"]`);
+        return input ? input.value : "";
+      }
+      const checked = form.querySelector(`input[name="q-${question.id}"]:checked`);
+      return checked ? checked.value : "";
+    }
+
+    function isCorrect(question, response) {
+      if (question.type === "gap-fill") {
+        const normalized = response.trim().toLowerCase();
+        return question.acceptedAnswers.some(answer => answer.trim().toLowerCase() === normalized);
+      }
+      return response.trim().toLowerCase() === question.answer.trim().toLowerCase();
+    }
+
+    function getOptionText(question, value) {
+      if (!question.options) return value || "";
+      const match = question.options.find(opt => opt.value.toLowerCase() === String(value).toLowerCase());
+      return match ? `${match.value.toUpperCase()}. ${match.text}` : value;
+    }
+
+    function getCorrectDisplay(question) {
+      if (question.type === "gap-fill") {
+        return question.acceptedAnswers.join(" / ");
+      }
+      return getOptionText(question, question.answer);
+    }
+
+    function getResponseDisplay(question, response) {
+      if (!response || !response.trim()) return "未作答";
+      if (question.type === "gap-fill") return response.trim();
+      return getOptionText(question, response);
+    }
+
+    function buildFeedback(question, response, correct) {
+      if (correct) {
+        return `
+          <p class="feedback-line">
+            <span class="badge good">Correct</span>
+            答案正确。
+          </p>
+        `;
+      }
+
+      return `
+        <p class="feedback-line">
+          <span class="badge bad">Incorrect</span>
+          你的答案：<strong>${escapeHtml(getResponseDisplay(question, response))}</strong>
+        </p>
+        <p class="feedback-line">
+          正确答案：<strong>${escapeHtml(getCorrectDisplay(question))}</strong>
+        </p>
+        <div class="support-tools">
+          <button type="button" class="mini-btn play-btn" data-audio="${escapeHtml(question.audio)}">重播本题音频</button>
+          <button type="button" class="mini-btn transcript-toggle" data-target="transcript-${question.id}">显示原文</button>
+        </div>
+        <div class="transcript hidden" id="transcript-${question.id}">
+          <div class="transcript-label">Transcript</div>
+          <p>${escapeHtml(question.transcript)}</p>
+        </div>
+      `;
+    }
+
+    function stopCurrentAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+        currentAudioFile = "";
+      }
+    }
+
+    function playClip(fileName) {
+      const src = normalizeAudioPath(fileName);
+      stopCurrentAudio();
+
+      const audio = new Audio(src);
+      currentAudio = audio;
+      currentAudioFile = src;
+      audioStatus.textContent = `正在播放：${src}`;
+
+      audio.addEventListener("ended", () => {
+        if (currentAudioFile === src) {
+          audioStatus.textContent = `播放结束：${src}`;
+          currentAudio = null;
+          currentAudioFile = "";
+        }
+      }, { once: true });
+
+      audio.addEventListener("error", () => {
+        if (currentAudioFile === src) {
+          audioStatus.textContent = `无法播放：${src}。请检查文件名或路径。`;
+          currentAudio = null;
+          currentAudioFile = "";
+        }
+      }, { once: true });
+
+      audio.play().catch(() => {
+        audioStatus.textContent = `无法播放：${src}。请检查文件名或路径。`;
+        currentAudio = null;
+        currentAudioFile = "";
+      });
+    }
+
+    function markResults() {
+      let score = 0;
+
+      quizData.forEach(question => {
+        const response = getResponse(question);
+        const correct = isCorrect(question, response);
+        const card = document.getElementById(`card-${question.id}`);
+        const feedback = document.getElementById(`feedback-${question.id}`);
+
+        card.classList.remove("correct", "incorrect");
+        card.classList.add(correct ? "correct" : "incorrect");
+
+        if (correct) score += 1;
+
+        feedback.innerHTML = buildFeedback(question, response, correct);
+        feedback.classList.remove("hidden");
+      });
+
+      const percentage = Math.round((score / quizData.length) * 100);
+      scoreText.textContent = `${score} / ${quizData.length}`;
+      scoreSubtext.textContent = `正确率：${percentage}%`;
+      results.classList.remove("hidden");
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetQuiz() {
+      form.reset();
+      stopCurrentAudio();
+      audioStatus.textContent = "";
+      results.classList.add("hidden");
+      scoreText.textContent = "";
+      scoreSubtext.textContent = "";
+
+      quizData.forEach(question => {
+        const card = document.getElementById(`card-${question.id}`);
+        const feedback = document.getElementById(`feedback-${question.id}`);
+        card.classList.remove("correct", "incorrect");
+        feedback.classList.add("hidden");
+        feedback.innerHTML = "";
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      stopCurrentAudio();
+      markResults();
+    });
+
+    resetBtn.addEventListener("click", resetQuiz);
+
+    document.addEventListener("click", function (event) {
+      const playBtn = event.target.closest(".play-btn");
+      if (playBtn) {
+        playClip(playBtn.dataset.audio);
+        return;
+      }
+
+      const toggleBtn = event.target.closest(".transcript-toggle");
+      if (toggleBtn) {
+        const targetId = toggleBtn.dataset.target;
+        const transcriptBox = document.getElementById(targetId);
+        const isHidden = transcriptBox.classList.toggle("hidden");
+        toggleBtn.textContent = isHidden ? "显示原文" : "隐藏原文";
+      }
+    });
+
+    renderQuiz();
+  </script>
+</body>
+</html>
